@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Stock;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
 class StockController extends Controller
@@ -17,7 +18,7 @@ class StockController extends Controller
     {
         $stocks = Stock::all();
         return Inertia::render('Stocks/Index',
-        ['stocks'=> $stocks]);
+        ['stocks'=>$stocks]);
     }
 
     /**
@@ -29,7 +30,7 @@ class StockController extends Controller
     {
         $stocks = Stock::all();
         return Inertia::render('Stocks/Create',
-        ['stocks'=> $stocks]);
+        ['stocks'=>$stocks]);
     }
 
     /**
@@ -77,7 +78,9 @@ class StockController extends Controller
      */
     public function show($id)
     {
-        //
+        $model =Stock::find($id);
+
+        return Inertia::render('Stocks/View',['model'=>$model]);
     }
 
     /**
@@ -100,7 +103,25 @@ class StockController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validate = $request->validate(
+
+            [
+               
+                'description' => 'required',
+                'stock_category_id' => 'required',
+                'uom' => 'required',
+                'barcode' => 'required',
+                'discontinued' => 'required',
+                'photo_path' => 'nullable',
+
+            ]
+
+        );
+
+
+        $model = Stock::find($id);
+        $model->update($validate);
+        return Redirect::route('stock.index')->with("Success", "Stock Updated");
     }
 
     /**
@@ -111,6 +132,11 @@ class StockController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            Stock::find($id)->delete();
+            return Redirect::route('stock.index')->with('success', 'Stock Deleted');
+        } catch (\Exception $e) {
+            return Redirect::route('stock.index')->with('error', $e->getMessage());
+        }
     }
 }

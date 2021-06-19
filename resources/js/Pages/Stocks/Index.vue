@@ -42,9 +42,21 @@
                 <td class="px-4 py-3">{{ item.stock_category_id }}</td>
                 <td class="px-4 py-3">{{ item.uom }}</td>
                 <td class="px-4 py-3">{{ item.barcode }}</td>
-                <td class="px-4 py-3">{{ item.discontinued }}</td>
-                <td class="px-4 py-3">{{ item.photo_path }}</td>
+                <th class="px-4 py-3">{{ item.discontinued }}</th>
+                <th class="px-4 py-3">{{ item.photo_path }}</th>
+                <td>
+                        <inertia-link :href="route('stock.show',item.id)">
+                          View
+                        </inertia-link>
+
+                            <inertia-link method="delete" :href="route('stock.destroy',item.id)">
+                          Delete
+                        </inertia-link>
+
+
+                </td>
               </tr>
+              <!-- each row -->
             </table>
           </div>
         </div>
@@ -59,6 +71,7 @@ import Layout from "@/Layouts/Layout.vue";
 export default {
   props: {
     stocks: Array,
+    success:String,
   },
   layout: Layout,
 };
